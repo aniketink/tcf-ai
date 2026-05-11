@@ -4,7 +4,7 @@
 
 Built by [aniketink](https://github.com/aniketink). Drop a PDF, get structured verdicts on every major claim — SUPPORTED, CONTRADICTED, or INCONCLUSIVE — with evidence citations from the Carcino Foundation oncology corpus. No API keys, no cloud, runs on a MacBook.
 
-![Architecture](ragd.png)
+
 
 ---
 <img width="595" height="1080" alt="Mermaid Diagram May 11 2026 (1)" src="https://github.com/user-attachments/assets/e609405e-3fa5-485c-97eb-d455db10d903" />
