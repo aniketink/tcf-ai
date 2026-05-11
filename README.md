@@ -1,8 +1,10 @@
-# RAG-Verify
+# RAG-Verify for Carcino Foundation
 
-**A fully local, privacy-preserving research paper fact-checker.**
+**A fully local, privacy-preserving research paper fact-checker for cancer research.**
 
-Built by [aniketink](https://github.com/aniketink). Drop a PDF, get structured verdicts on every major claim — SUPPORTED, CONTRADICTED, or INCONCLUSIVE — with evidence citations. No API keys, no cloud, runs on a MacBook.
+Built by [aniketink](https://github.com/aniketink). Drop a PDF, get structured verdicts on every major claim — SUPPORTED, CONTRADICTED, or INCONCLUSIVE — with evidence citations from the Carcino Foundation oncology corpus. No API keys, no cloud, runs on a MacBook.
+
+![Architecture](ragd.png)
 
 ---
 <img width="595" height="1080" alt="Mermaid Diagram May 11 2026 (1)" src="https://github.com/user-attachments/assets/e609405e-3fa5-485c-97eb-d455db10d903" />
@@ -34,7 +36,7 @@ Given a paper, RAG-Verify:
 - **Cross-encoder reranking** — re-scores evidence for precision, above raw similarity
 - **Self-reflection critique loop** — decomposes claims into sub-claims + fills evidence gaps
 - **Auto-corpus expansion** — downloads relevant arXiv papers when coverage is weak
-- **Medical domain optimized** — seed corpus of ~190 foundational medical AI papers
+- **Oncology domain optimized** — seed corpus of ~250 foundational cancer research papers
 - **Fully local** — Ollama + ChromaDB, no external API calls
 - **One command** — `python auto_corpus.py paper.pdf`
 
@@ -66,7 +68,7 @@ source .venv/bin/activate
 python auto_corpus.py your_paper.pdf
 ```
 
-First run downloads ~190 medical AI papers (5–10 minutes, arXiv rate-limited). Subsequent runs are instant.
+First run downloads ~250 oncology papers (5–10 minutes, arXiv rate-limited). Subsequent runs are instant.
 
 ---
 
@@ -179,19 +181,20 @@ tcf-ai/
 
 ---
 
-## Medical Seed Corpus
+## Oncology Seed Corpus
 
-**24 topic areas, ~190 papers** across:
+**33 topic areas, ~250 papers** curated for the Carcino Foundation across:
 
 | Category | Topics |
 |---|---|
-| Medical Imaging | chest X-ray, brain MRI, histopathology, CT, OCT, dermoscopy |
-| Clinical NLP | EHRs, NER, clinical report generation, deidentification |
-| Medical LLMs | PubMedBERT, MedQA, GPT-4 in clinical settings |
-| Diagnosis | cancer prognosis, sepsis prediction, diabetic retinopathy |
-| Fine-tuning | LoRA, PEFT, instruction tuning for medical domain |
-| Multi-modal | vision-language models, federated learning, self-supervised |
-| Benchmarks | MIMIC, ChestX-ray14, RadGraph, i2b2 |
+| Cancer Genomics | TCGA, BRCA1/2, TP53/KRAS/BRAF mutations, ctDNA liquid biopsy |
+| Cancer Pathology | WSI, tumor grading, histopathology CNN/transformer |
+| Cancer Imaging | PET/CT/MRI radiomics, FDG-PET staging |
+| Clinical NLP | Clinical trial extraction, OncoKB, biomarker reporting |
+| Oncology LLMs | Virchow foundation model, PubMedBERT for oncology |
+| Prognosis | Survival analysis, recurrence prediction, Cox regression |
+| Immunotherapy | CAR-T, checkpoint inhibitors, tumor microenvironment |
+| Drug Discovery | TKI, PARP inhibitors, synthetic lethality, ADC |
 
 ---
 

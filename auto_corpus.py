@@ -71,39 +71,44 @@ def extract_topics_from_pdf(pdf_path: Path) -> list[str]:
 
     # also try to extract common ML/AI keywords from name
     keywords = [
-        # Medical imaging
-        "chest X-ray pneumonia COVID tuberculosis",
-        "brain MRI tumor segmentation",
-        "histopathology cancer WSI",
-        "retinal OCT fundus diabetic",
-        "CT scan lung nodule",
-        "medical imaging CNN transformer",
-        # Clinical NLP & EHRs
-        "clinical NLP EHR electronic health records",
-        "medical named entity recognition",
-        "deidentification privacy clinical notes",
-        "clinical report generation",
+        # Cancer genomics & TCGA
+        "tumor mutation burden TMB microsatellite instability MSI",
+        "BRCA1 BRCA2 breast cancer genetics",
+        "TP53 KRAS BRAF oncogene mutation",
+        "circulating tumor DNA ctDNA liquid biopsy",
+        "precision oncology biomarker HER2 PD-L1",
+        "checkpoint inhibitor immunotherapy cancer",
+        "CAR-T cell therapy solid tumor",
+        "chemotherapy resistance cancer recurrence",
+        # Cancer pathology & imaging
+        "whole slide image WSI histopathology cancer",
+        "tumor grade stage TNM staging",
+        "radiomics PET CT MRI cancer imaging",
+        "Ki67 proliferative index breast cancer",
+        "pathology deep learning cancer detection CNN transformer",
+        # Clinical oncology NLP
+        "oncology clinical trial structured extraction",
+        "OncoKB variant interpretation cancer",
+        "biomarker expression immunohistochemistry cancer",
+        # Prognosis
+        "cancer survival prognosis prediction model",
+        "recurrence free survival RFS overall survival OS",
+        "liquid biopsy early cancer detection",
         # Foundation models
-        "medical LLM GPT clinical diagnosis",
-        "biomedical QA MedQA PubMedBERT",
-        "vision language model medical",
-        "foundation model CheXbert RadGraph",
-        # Fine-tuning methods
-        "LoRA fine-tuning medical",
-        "parameter efficient PEFT clinical",
-        "instruction tuning medical domain",
-        "RAG clinical decision retrieval",
-        # Multi-modal & emerging
-        "multimodal imaging text",
-        "federated learning medical privacy",
-        "self-supervised medical imaging",
-        "zero-shot medical classification",
-        "drug discovery molecular property",
-        # General AI methods
+        "pathology foundation model Virchow cancer",
+        "LoRA fine-tuning cancer genomics model",
+        "RAG clinical decision oncology support",
+        "instruction tuning oncology domain LLM",
+        # Drug discovery
+        "targeted therapy TKI cancer drug",
+        "PARP inhibitor BRCA synthetic lethality",
+        "tumor microenvironment immune evasion",
+        "metastasis cancer prediction organotropism",
+        # General AI
         "transformer attention mechanism",
-        "knowledge distillation clinical",
-        "cancer prognosis survival analysis",
-        "sepsis ICU early warning prediction",
+        "parameter efficient fine-tuning PEFT LoRA",
+        "self-supervised medical image representation",
+        "federated learning privacy-preserving medical",
     ]
     name_words = set(name.split())
     for kw in keywords:
@@ -117,37 +122,45 @@ def extract_topics_from_pdf(pdf_path: Path) -> list[str]:
 def build_seed_corpus():
     """Download a foundational set of papers covering core ML/AI topics."""
     seed_topics = [
-        # ── Medical Imaging ──
-        ("chest X-ray pneumonia tuberculosis COVID deep learning diagnosis", 10),
-        ("brain tumor MRI segmentation U-Net deep learning", 8),
-        ("histopathology cancer detection CNN transformer pathology", 8),
-        ("retinal OCT fundus diabetic retinopathy imaging AI", 8),
-        ("skin lesion melanoma classification dermoscopy CNN", 8),
-        # ── Clinical NLP & EHRs ──
-        ("clinical NLP electronic health records EHR BERT", 10),
-        ("medical named entity recognition clinical text extraction", 8),
-        ("clinical report generation language model GPT radiology", 8),
-        # ── Medical LLMs & Foundation Models ──
-        ("medical language model GPT-4 clinical diagnosis PubMed", 10),
-        ("biomedical question answering MedQA PubMedBERT", 8),
-        ("vision language model medical imaging report generation", 8),
-        # ── Diagnosis & Prognosis ──
-        ("cancer diagnosis machine learning prognosis survival", 10),
-        ("sepsis prediction ICU early warning deep learning", 6),
-        ("diabetes retinopathy screening deep learning", 6),
-        # ── Fine-tuning & Efficient Methods ──
-        ("LoRA low-rank adaptation medical language model fine-tuning", 10),
-        ("parameter efficient fine-tuning PEFT clinical NLP", 8),
-        ("instruction tuning medical domain LLM alignment", 8),
-        ("RAG retrieval augmented clinical decision support", 8),
-        # ── Multi-modal, Self-supervised & Privacy ──
-        ("multimodal medical imaging text report alignment", 8),
-        ("self-supervised medical image representation learning", 8),
-        ("federated learning medical data privacy", 6),
-        ("AI drug discovery molecular property prediction", 6),
-        # ── Benchmarks ──
-        ("medical AI benchmark MIMIC ChestX-ray14 dataset", 6),
-        ("radiology report NLP RadGraph i2b2 deidentification", 6),
+        # ── Cancer Genomics & TCGA ──
+        ("TCGA cancer genome atlas tumor mutation burden", 10),
+        ("BRCA1 BRCA2 breast cancer susceptibility genetics", 10),
+        ("TP53 KRAS MYC oncogene cancer mutation", 8),
+        ("circulating tumor DNA ctDNA liquid biopsy cancer", 8),
+        ("precision oncology tumor mutational signature", 8),
+        ("methylation array cancer epigenomics biomarker", 6),
+        ("CAR-T cell immunotherapy solid tumor", 8),
+        ("checkpoint inhibitor pembrolizumab nivolumab cancer", 10),
+        ("chemotherapy resistance docetaxel cisplatin cancer", 8),
+        # ── Cancer Pathology & Imaging ──
+        ("whole slide image WSI histopathology cancer grading", 10),
+        ("pathology deep learning tumor segmentation CNN transformer", 8),
+        ("histopathology cancer detection metastasis lymph node", 8),
+        ("radiomics PET CT MRI cancer staging prognosis", 8),
+        ("molecular imaging FDG PET cancer diagnosis", 6),
+        # ── Clinical Oncology NLP ──
+        ("oncology clinical trial NLP extraction structured", 10),
+        ("clinical NLP tumor registry cancer reporting", 8),
+        ("OncoKB variant interpretation cancer mutations", 8),
+        ("biomarker HER2 ER PR Ki67 breast cancer pathology", 8),
+        # ── Cancer Prognosis & Survival ──
+        ("cancer survival prognosis Cox regression machine learning", 10),
+        ("recurrence prediction breast cancer survival analysis", 8),
+        ("PFS OS overall survival cancer clinical trial", 6),
+        ("liquid biopsy early cancer detection ctDNA methyl", 8),
+        # ── Cancer Foundation Models & Fine-tuning ──
+        ("pathology foundation model cancer detection Virchow", 10),
+        ("PLIP protein ligand interaction cancer drug", 8),
+        ("LoRA fine-tuning cancer genomics model", 10),
+        ("protein language model cancer mutation effect", 8),
+        ("RAG clinical decision oncology support", 8),
+        ("instruction tuning oncological domain LLM", 8),
+        # ── Emerging & Drug Discovery ──
+        ("targeted therapy tyrosine kinase inhibitor cancer", 8),
+        ("antibody drug conjugate ADC cancer payload", 6),
+        ("tumor microenvironment immune evasion microenvironment", 8),
+        ("metastasis organotropism machine learning prediction", 6),
+        ("cancer synthetic lethality BRCA PARP inhibitor", 6),
     ]
 
     print("[*] Building seed corpus with foundational papers...")
