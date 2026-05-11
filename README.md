@@ -5,6 +5,7 @@
 Built by [aniketink](https://github.com/aniketink). Drop a PDF, get structured verdicts on every major claim — SUPPORTED, CONTRADICTED, or INCONCLUSIVE — with evidence citations. No API keys, no cloud, runs on a MacBook.
 
 ---
+  +![Architecture](ragd.png)                                                                                                                 
 
 ## What It Does
 
