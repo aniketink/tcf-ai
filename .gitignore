@@ -1,0 +1,32 @@
+# Environment
+.env
+.env.local
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.mypy_cache/
+.pytest_cache/
+*.egg-info/
+dist/
+build/
+
+# Virtual environment
+venv/
+.venv/
+env/
+
+# Vector store & corpus data
+chroma_db/
+corpus/*.pdf
+!corpus/.gitkeep
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Misc
+*.log
+*.swp
+*.swo
