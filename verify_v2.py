@@ -9,12 +9,13 @@ from pydantic import BaseModel, Field
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_chroma import Chroma
-from langchain_ollama import ChatOllama
+from langchain_openai import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.documents import Document
 from sentence_transformers import CrossEncoder
 from rich.console import Console
 from rich.table import Table
+from tavily import TavilyClient
 
 load_dotenv()
 
@@ -26,6 +27,32 @@ RETRIEVAL_K = 20      # Initial ANN retrieval depth
 RERANK_TOP_K = 5       # Chunks to keep after reranking
 CRITIQUE_ROUNDS = 2    # Self-reflection iterations
 API_RATE_LIMIT = 5     # Seconds between LLM calls
+
+# --- Tavily Web Search ---
+def web_search(query: str, max_results: int = 5) -> List[Document]:
+    """Search the web using Tavily and return results as Documents."""
+    api_key = os.getenv("TAVILY_API_KEY")
+    if not api_key:
+        return []
+
+    try:
+        client = TavilyClient(api_key=api_key)
+        results = client.search(query, max_results=max_results)
+        docs = []
+        for r in results.get("results", []):
+            doc = Document(
+                page_content=r.get("content", ""),
+                metadata={
+                    "source": r.get("url", "web"),
+                    "title": r.get("title", "Web"),
+                    "rerank_score": 1.0
+                }
+            )
+            docs.append(doc)
+        return docs
+    except Exception as e:
+        print(f"  [dim]Web search error: {e}[/dim]")
+        return []
 
 # --- Data Models ---
 class ExtractedClaims(BaseModel):
@@ -81,7 +108,7 @@ def retrieve_and_rerank(query: str, vectorstore: Chroma, cross_encoder: CrossEnc
     return reranked
 
 
-def critique_evidence(llm: ChatOllama, claim: str, evidence_chunks: List[Document]) -> CritiqueResult:
+def critique_evidence(llm: ChatOpenAI, claim: str, evidence_chunks: List[Document]) -> CritiqueResult:
     """Self-reflection: derive sub-claims and identify weak areas given evidence."""
     evidence_text = "\n\n".join([
         f"[{i+1}] {doc.page_content}" for i, doc in enumerate(evidence_chunks)
@@ -100,7 +127,7 @@ def critique_evidence(llm: ChatOllama, claim: str, evidence_chunks: List[Documen
     return chain.invoke({"claim": claim, "evidence": evidence_text})
 
 
-def verify_sub_claims(llm: ChatOllama, sub_claims: List[str], evidence_chunks: List[Document]) -> List[VerdictResult]:
+def verify_sub_claims(llm: ChatOpenAI, sub_claims: List[str], evidence_chunks: List[Document]) -> List[VerdictResult]:
     """Verify each sub-claim against the evidence chunks."""
     evidence_text = "\n\n".join([
         f"[{i+1}] {doc.page_content}" for i, doc in enumerate(evidence_chunks)
@@ -174,7 +201,7 @@ def verify_paper(pdf_path: str, verbose: bool = False):
         return
 
     # --- Initialize Models ---
-    llm = ChatOllama(model="llama3.2:3b", temperature=0, keep_alive="10m")
+    llm = ChatOpenAI(model="gpt-4o-mini", temperature=0, api_key=os.getenv("OPENAI_API_KEY"))
     embeddings = HuggingFaceEmbeddings(model_name=EMBEDDING_MODEL)
     vectorstore = Chroma(persist_directory=CHROMA_DB_DIR, embedding_function=embeddings)
     console.print("[bold blue]Loading reranker model...[/bold blue]")
@@ -209,14 +236,20 @@ def verify_paper(pdf_path: str, verbose: bool = False):
     for idx, claim in enumerate(claims, 1):
         console.print(f"[bold cyan]Claim {idx}/{len(claims)}:[/bold cyan] {claim[:80]}{'...' if len(claim) > 80 else ''}")
 
-        # 1. Retrieve + Rerank
+        # 1. Retrieve + Rerank from local corpus
         if verbose:
             console.print("  [dim]Retrieving & reranking...[/dim]")
         evidence_chunks = retrieve_and_rerank(claim, vectorstore, cross_encoder, k=RETRIEVAL_K)
 
+        # Fallback to web search if no local results
+        if not evidence_chunks:
+            if verbose:
+                console.print("  [dim]No local results, searching web...[/dim]")
+            evidence_chunks = web_search(claim, max_results=5)
+
         if not evidence_chunks:
             table.add_row(claim, "[bold yellow]INCONCLUSIVE[/bold yellow]",
-                         "No relevant evidence found in knowledge base.", "N/A")
+                         "No relevant evidence found in knowledge base or web.", "N/A")
             continue
 
         sources = list(set(doc.metadata.get("source", "Unknown") for doc in evidence_chunks))
